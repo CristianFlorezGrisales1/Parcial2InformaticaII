@@ -1,0 +1,399 @@
+/*NOTA: Hemos tomado la decisión de eliminar algunas clases con el objetivo de simplificar y hacer más claro el proceso de codificación. Algunas funcionalidades que antes 
+se encontraban en estas clases han sido incorporadas en otras clases preexistentes como por ejmplo en la clase tablero, lo que nos permite contar con menos clases y, al mismo tiempo, 
+obtener un código más compacto y comprensible."*/
+
+#include<iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+
+// Clase HistorialPartidas
+class HistorialPartidas {
+    
+    // Atributos
+    vector<pair<string, string>> partidas;
+    
+    // Métodos
+    void agregar_partida(pair<string, string> partida) {
+        partidas.push_back(partida);
+    }
+    
+    vector<pair<string, string>> obtener_partidas() {
+        return partidas;
+    }
+};
+
+
+
+class Tablero {
+private:
+    char tableroJuego[9][9];
+
+
+public:
+    // Constructor
+    Tablero() {
+        inicializar();
+    }
+
+
+void inicializar() {
+        cout << "BIENVENIDO A OTHELLO" << endl;
+
+        // Etiquetas de la primera fila (números del 1 al 8)
+        for (int j = 0; j <= 8; j++) {
+
+            tableroJuego[0][j] = '0' + j;
+        }
+
+        // Etiquetas de la primera columna (números del 1 al 8)
+        for (int i = 1; i <= 8; i++) {
+            tableroJuego[i][0] = '0' + i;
+        }
+
+        // Inicializar el tablero
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                if ((i == 4 && j == 4) || (i == 5 && j == 5)) {
+                    tableroJuego[i][j] = 'B';
+                } else if ((i == 5 && j == 4) || (i == 4 && j == 5)) {
+                    tableroJuego[i][j] = 'N';
+                } else {
+                    tableroJuego[i][j] = '_';
+                }
+            }
+        }
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            cout << tableroJuego[i][j]<<" "; // Imprimir un espacio en blanco y agregar un espacio
+        }
+        cout <<endl; // Saltar a la siguiente línea después de imprimir una fila completa
+    }
+
+}
+
+
+
+
+    int juegoterminado(){
+
+        int contJugadas=0;
+
+        for (int i = 1; i < 8; i++) {
+            for (int j=1;j<8;j++){
+
+                if (tableroJuego[i][j]!='_'){
+                    contJugadas++;
+                }
+
+            }
+        }
+        return contJugadas;
+
+    }
+
+
+
+
+    int turnos(int turnoAnt){
+
+
+        if(turnoAnt%2==0){
+            return turnoAnt;
+
+        }
+        else if(turnoAnt%2!=0){
+            return turnoAnt;
+
+
+
+        }
+    }
+
+
+    bool jugadaValidaAndMovimientoSandwich(int fila, int columna, int turno) {
+        char jugador;
+        char adversario;
+        if (turno % 2 != 0) {
+            jugador = 'N';
+            adversario = 'B';
+        } else {
+            jugador = 'B';
+            adversario = 'N';
+        }
+
+        if (tableroJuego[fila][columna] != '_') {
+            return false; // La casilla no está vacía
+        }
+
+        // Definir las 8 direcciones posibles (arriba, abajo, izquierda, derecha, diagonales)
+        int dirFilas[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int dirColumnas[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+        bool movimientoValido = false;
+
+        for (int i = 0; i < 8; i++) {
+            int filaActual = fila + dirFilas[i];
+            int columnaActual = columna + dirColumnas[i];
+
+            bool hayFichasAdversarioEnLaDireccion = false;
+            std::vector<std::pair<int, int>> fichasParaCambiar; // Almacena las fichas para cambiar en esta dirección
+
+            while (filaActual >= 0 && filaActual < 8 && columnaActual >= 0 && columnaActual < 8) {
+                if (tableroJuego[filaActual][columnaActual] == adversario) {
+                    // Encontramos una ficha del adversario, marcamos que hay fichas adversarias en esta dirección
+                    hayFichasAdversarioEnLaDireccion = true;
+                    fichasParaCambiar.push_back(std::make_pair(filaActual, columnaActual));
+                } else if (tableroJuego[filaActual][columnaActual] == jugador) {
+                    // Encontramos una ficha propia, el movimiento es válido si hay fichas adversarias en esta dirección
+                    if (hayFichasAdversarioEnLaDireccion) {
+                        // Realizamos los cambios en el tablero
+                        for (const auto& ficha : fichasParaCambiar) {
+                            tableroJuego[ficha.first][ficha.second] = jugador;
+                        }
+                        tableroJuego[fila][columna] = jugador;
+                        movimientoValido = true;
+                    }
+                    break;
+                } else {
+                    // Encontramos una casilla vacía, no hay un movimiento válido en esta dirección
+                    break;
+                }
+
+                // Avanzamos en la dirección
+                filaActual += dirFilas[i];
+                columnaActual += dirColumnas[i];
+            }
+
+            if (movimientoValido) {
+                break; // No es necesario verificar otras direcciones si ya encontramos un movimiento válido.
+            }
+        }
+
+        return movimientoValido;
+    }
+
+
+
+
+    void colocarFicha() {
+        int columna, fila, turnoAnt = 1;
+
+        bool condTerminacionJue = true;
+
+        while (condTerminacionJue) {
+            int turno = turnos(turnoAnt);
+            if (turno % 2 != 0) {
+                cout << "Turno de las negras" << endl;
+
+                cout << "Ingresa posicion donde quieras la ficha. ejemplo posicon (2,3) fila 2 columna 3):";
+                cout << "fila:";
+                cin >> fila;
+                cout << "columna:";
+                cin >> columna;
+                cout << "------------------------------------------------------------------------------------------------------------------------" << endl;
+
+
+                bool posibleJugada = jugadaValidaAndMovimientoSandwich(fila, columna,turno);
+
+                if (posibleJugada) {
+
+                    turnoAnt++;
+                    //tableroJuego[fila][columna] = ficha;
+
+
+                    for (int i = 0; i < 9; i++) {
+                        for (int j = 0; j < 9; j++) {
+                            cout << tableroJuego[i][j] << " "; // Imprimir un espacio en blanco y agregar un espacio
+                        }
+                        cout << endl; // Saltar a la siguiente línea después de imprimir una fila completa
+
+
+                    }
+                }
+                else {
+                    cout << "JUGADA NO VALIDA, INTENTALO DE NUEVO" << endl;
+                    for (int i = 0; i < 9; i++) {
+                        for (int j = 0; j < 9; j++) {
+                            cout << tableroJuego[i][j] << " "; // Imprimir un espacio en blanco y agregar un espacio
+                        }
+                        cout << endl; // Saltar a la siguiente línea después de imprimir una fila completa
+                    }
+                }
+            }
+
+            else{
+                cout << "Turno de las Blancas" << endl;
+
+
+                cout << "Ingresa posicion donde quieras la ficha. ejemplo posicon (2,3) fila 2 columna 3):";
+                cout << "fila:";
+                cin >> fila;
+                cout << "columna:";
+                cin >> columna;
+                cout << "------------------------------------------------------------------------------------------------------------------------" << endl;
+
+
+
+                bool posibleJugada = jugadaValidaAndMovimientoSandwich(fila, columna,turno);
+                if (posibleJugada) {
+
+                    turnoAnt++;
+
+
+
+                    for (int i = 0; i < 9; i++) {
+                        for (int j = 0; j < 9; j++) {
+                            cout << tableroJuego[i][j] << " "; // Imprimir un espacio en blanco y agregar un espacio
+                        }
+                        cout << endl; // Saltar a la siguiente línea después de imprimir una fila completa
+                    }
+
+
+                }
+                else {
+                    cout << "JUGADA NO VALIDA, INTENTALO DE NUEVO" << endl;
+                    for (int i = 0; i < 9; i++) {
+                        for (int j = 0; j < 9; j++) {
+                            cout << tableroJuego[i][j] << " "; // Imprimir un espacio en blanco y agregar un espacio
+                        }
+                        cout << endl; // Saltar a la siguiente línea después de imprimir una fila completa
+                    }
+                }
+            }
+            int numeroDeJugadas=juegoterminado();
+            if(numeroDeJugadas==64){
+                condTerminacionJue=false;
+            }
+        }
+
+
+
+
+
+    }
+
+
+
+
+
+    void revisarTablero() {
+        // Aquí puedes implementar la lógica para revisar el estado del tablero.
+    }
+
+
+    int obtenerJugadorGanador() {
+        int fichasNegras = 0;
+        int fichasBlancas = 0;
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (tableroJuego[i][j] == 'N') {
+                    fichasNegras++;
+                } else if (tableroJuego[i][j] == 'B') {
+                    fichasBlancas++;
+                }
+            }
+        }
+
+        cout << "Fichas Negras: " << fichasNegras << endl;
+        cout << "Fichas Blancas: " << fichasBlancas << endl;
+
+        if(fichasNegras>fichasBlancas){
+            cout<<"El ganador son las fichas Negras";
+        }
+        if(fichasBlancas>fichasNegras){
+            cout<<"El ganador son las fichas Blancas";
+        }
+        if(fichasBlancas==fichasNegras){
+            cout<<"Empate";
+        }
+
+
+
+    }
+
+    void dimensiones() {
+        // Aquí puedes implementar la lógica para obtener las dimensiones del tablero (8x8).
+    }
+};
+
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+class Jugador {
+private:
+    string nombre; // El nombre del jugador.
+    string color;  // El color de las fichas del jugador.
+
+public:
+    Jugador(const string& nombre, const string& color) {
+        this->nombre = nombre;
+        this->color = color;
+    }
+    //  El uso de this-> se utiliza para distinguir entre los atributos de la clase y los argumentos del constructor con el mismo nombre.
+
+
+};
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int main() {
+
+    bool valor=true;
+
+
+    while(valor){
+
+        Tablero juego;
+        int opcion;
+
+
+        juego.colocarFicha();
+        juego.obtenerJugadorGanador();
+
+
+        cout<<"\n";
+        cout<<"\n";
+        cout<<"Para volver a jugar ingrese 1, para salir salir ingrese cualquier numero:";
+        cin>>opcion;
+
+        if(opcion==1){
+            valor=true;
+        }
+        else{
+            valor=false;
+        }
+    }
+
+
+
+
+    return 0;
+}
+
+
+
