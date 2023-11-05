@@ -1,5 +1,5 @@
 /*NOTA: Hemos tomado la decisión de eliminar algunas clases con el objetivo de simplificar y hacer más claro el proceso de codificación. Algunas funcionalidades que antes 
-se encontraban en estas clases han sido incorporadas en otras clases preexistentes como por ejmplo en la clase tablero, lo que nos permite contar con menos clases y, al mismo tiempo, 
+se encontraban en estas clases han sido incorporadas en otras clases preexistentes como por ejemplo en la clase tablero, lo que nos permite contar con menos clases y, al mismo tiempo, 
 obtener un código más compacto y comprensible."*/
 
 #include<iostream>
