@@ -1,4 +1,4 @@
-/*"Este código implementa todas las funcionalidades que se mostraron en el video, además de incluir las funcionalidades relacionadas con el historial de partidas. 
+/*"Este código implementa todas las funcionalidades que se mostraron en el video, además de incluir las funcionalidades relacionadas con el historial de partidas.
 Estas últimas no se profundizaron en el video debido a limitaciones de tiempo, pero están completamente incorporadas en el código."*/
 
 #include<iostream>
@@ -422,20 +422,28 @@ void jugarPartida() {
     HistorialPartidas historial;
     string hora, fecha, nombre1, nombre2, fichaGanadora;
     int fichasNegras, fichasBlancas;
+
     cout << "Bienvenido a OTHELLO" << endl;
-    cout << "Ingrese fecha:";
-    cin >> fecha;
-    cout << "Ingrese hora, agregue Pm o Am o hora militar:";
-    cin >> hora;
-    cout << "Ingrese jugador 1:";
-    cin >> nombre1;
+
+    cout << "Ingrese fecha: ";
+    getline(cin, fecha);
+
+    cout << "Ingrese hora, agregue Pm o Am o hora militar: ";
+    getline(cin, hora);
+
+    cout << "Ingrese jugador 1: ";
+    getline(cin, nombre1);
+
     cout << "\n";
-    cout << "Ingrese jugador 2:";
-    cin >> nombre2;
-    cout << "Por defecto, jugador 1 con fichas blancas y jugador 2 con fichas negras" << endl;
+
+    cout << "Ingrese jugador 2: ";
+    getline(cin, nombre2);
+
+
+     cout << "Por defecto, jugador 1 con fichas blancas y jugador 2 con fichas negras" << endl;
     int verHistorial;
     cout << "Desea ver el historial de partidas? Ingrese 1 para verlo, o cualquier numero para jugar:";
-            cin >> verHistorial;
+    cin >> verHistorial;
     cout << "\n";
     if (verHistorial == 1) {
         historial.imprimirArchivoTexto();
@@ -458,7 +466,7 @@ void jugarPartida() {
 
         cout << "\n";
         cout << "\n";
-        cout << "Para volver a jugar ingrese 1, para mirar el historial de partidas ingrese 2, para salir ingrese cualquier número:";
+        cout << "Para volver a jugar ingrese 1, para mirar el historial de partidas ingrese 2, para salir ingrese cualquier numero:";
             int opcion;
         cin >> opcion;
 
@@ -468,7 +476,7 @@ void jugarPartida() {
             historial.imprimirArchivoTexto();
             int opcion;
             cout << "\n";
-            cout << "¿Quieres volver a jugar? Ingresa 1 para volver a jugar, cualquier número para salir:" << endl;
+            cout << "¿Quieres volver a jugar? Ingresa 1 para volver a jugar, cualquier numero para salir:" << endl;
                         cin >> opcion;
             if (opcion == 1) {
                 valor = true;
@@ -493,4 +501,3 @@ int main() {
     jugarPartida();
     return 0;
 }
-
